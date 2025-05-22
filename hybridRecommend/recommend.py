@@ -1,5 +1,5 @@
-from content_base import content_based_recommend
-from collaborative_filter import cf_model, ratings, reverse_book_mapping, book_mapping
+from .content_base import content_based_recommend
+from .collaborative_filter import cf_model, ratings, reverse_book_mapping, book_mapping
 
 def recommend_for_user(user_id, top_k):
     # Get all books rated by User with ID is user_id

@@ -25,7 +25,8 @@ class SyncData(BaseModel):
     ratings: List[Rating]
 
 def write_books_csv(book_list):
-    file_path = "dataset/book.csv"
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(current_dir, "dataset/book.csv")
     df_new = pd.DataFrame([{
         "BookID": b.id,
         "Title": b.title,
@@ -44,7 +45,8 @@ def write_books_csv(book_list):
     df.to_csv(file_path, index=False)
 
 def write_users_csv(user_list):
-    file_path = "dataset/user.csv"
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(current_dir, "dataset/user.csv")
     df_new = pd.DataFrame([{
         "UserID": u.id,
         "Name": u.name
@@ -60,7 +62,8 @@ def write_users_csv(user_list):
     df.to_csv(file_path, index=False)
 
 def write_ratings_csv(rating_list):
-    file_path = "dataset/rating.csv"
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(current_dir, "dataset/rating.csv")
     df_new = pd.DataFrame([{
         "UserID": r.user_id,
         "BookID": r.book_id,

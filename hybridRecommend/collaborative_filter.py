@@ -3,7 +3,10 @@ import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 from sklearn.metrics.pairwise import cosine_similarity
 from scipy import sparse
 
-ratings = pd.read_csv("dataset/rating.csv")
+import os
+# Use path relative to the current file
+current_dir = os.path.dirname(os.path.abspath(__file__))
+ratings = pd.read_csv(os.path.join(current_dir, "dataset/rating.csv"))
 
 # Tạo ánh xạ từ UUID sang số nguyên cho user_id và book_id
 user_mapping = {uid: idx + 1 for idx, uid in enumerate(ratings['UserID'].unique())}

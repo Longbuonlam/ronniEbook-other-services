@@ -18,7 +18,10 @@ def tfidf_matrix(books):
     new_tfidf_matrix = tf.fit_transform(books['combined'])
     return new_tfidf_matrix
 
-books = pd.read_csv("dataset/book.csv")
+import os
+# Use path relative to the current file
+current_dir = os.path.dirname(os.path.abspath(__file__))
+books = pd.read_csv(os.path.join(current_dir, "dataset/book.csv"))
 matrix = tfidf_matrix(books)
 cosine_sim = cosine_similarity(matrix)
 
