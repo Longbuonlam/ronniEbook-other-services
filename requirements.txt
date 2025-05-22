@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+pydantic
+pandas
+scikit-learn
+numpy
+scipy
+gradio-client
+requests
+sseclient-py
+python-multipart
