@@ -31,7 +31,7 @@ def write_books_csv(book_list):
         "BookID": b.id,
         "Title": b.title,
         "Author": b.author,
-        "Genre": b.category,
+        "Genre": b.genre,
         "Description": b.description
     } for b in book_list])
 
