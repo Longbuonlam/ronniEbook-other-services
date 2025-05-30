@@ -1,9 +1,9 @@
 services:
   - type: web
-    name: ronniEbook-services
+    name: ronniEbook-other-services
     env: python
     buildCommand: "pip install -r requirements.txt"
-    startCommand: "uvicorn main:app --host 0.0.0.0 --port 10000 --reload --reload-dir hybridRecommend/dataset"
+    startCommand: "python3 run_prod.py"
     plan: free 
     region: singapore
     healthCheckPath: /

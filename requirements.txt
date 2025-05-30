@@ -9,3 +9,4 @@ gradio-client
 requests
 sseclient-py
 python-multipart
+watchfiles
