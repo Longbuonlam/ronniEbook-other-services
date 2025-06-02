@@ -5,7 +5,6 @@ from hybridRecommend.content_base import content_based_recommend
 from hybridRecommend.update_data import write_books_csv, write_users_csv, write_ratings_csv, SyncData
 from gradio_client import Client, handle_file
 import requests
-import sseclient
 import uuid
 from tts.model import AudioRequest
 
@@ -104,21 +103,42 @@ def process_audio(request: AudioRequest):
 
     # Step 2: Listen to the SSE stream
     get_url = f"https://thinhlpg-vixtts-demo.hf.space/queue/data?session_hash={session_hash}"
-    client = sseclient.SSEClient(get_url)
-
-    # Listen for messages
-    for msg in client:
-        print("Received message:", msg.data)
-
-        # Check if the message is "process_completed"
-        if '"msg":"process_completed"' in msg.data:
-            # Extract the URL directly from the message string
-            start_index = msg.data.find('"url":"') + len('"url":"')
-            end_index = msg.data.find('"', start_index)
-            output_url = msg.data[start_index:end_index]
-
-            print("Process completed. File URL:", output_url)
-            # Stop the SSE stream
-            break  # Exit the loop after receiving the "process_completed" message
+    
+    # Use requests with stream=True to manually handle the SSE stream
+    output_url = None
+    try:
+        response = requests.get(get_url, stream=True)
         
-    return output_url
+        # Ensure the response is successful
+        response.raise_for_status()
+        
+        # Process the streaming response line by line
+        for line in response.iter_lines():
+            if line:
+                # Decode the line
+                decoded_line = line.decode('utf-8')
+                
+                # SSE format: lines starting with "data:" contain the message data
+                if decoded_line.startswith('data:'):
+                    # Extract the data part
+                    data = decoded_line[5:].strip()
+                    print("Received message:", data)
+                    
+                    # Check if the message is "process_completed"
+                    if '"msg":"process_completed"' in data:
+                        # Extract the URL directly from the message string
+                        start_index = data.find('"url":"') + len('"url":"')
+                        end_index = data.find('"', start_index)
+                        output_url = data[start_index:end_index]
+                        
+                        print("Process completed. File URL:", output_url)
+                        # Stop the SSE stream
+                        break  # Exit the loop after receiving the "process_completed" message
+    except Exception as e:
+        print(f"Error processing SSE stream: {e}")
+        return {"error": "Failed to process audio stream", "details": str(e)}
+        
+    if output_url:
+        return output_url
+    else:
+        return {"error": "No output URL was generated"}
