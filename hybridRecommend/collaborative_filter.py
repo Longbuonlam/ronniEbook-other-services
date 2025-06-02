@@ -100,15 +100,24 @@ class CF(object):
         # tìm tất cả user đã rate item i
         ids = np.where(self.Y_data[:, 1] == i)[0].astype(np.int32)
         users_rated_i = (self.Y_data[ids, 0]).astype(np.int32)
+        
+        # Handle case where no users have rated this item
+        if len(users_rated_i) == 0:
+            return 0
+            
         sim = self.S[u, users_rated_i]
         a = np.argsort(sim)[-self.k:]
         nearest_s = sim[a]
-        r = self.Ybar[i, users_rated_i[a]]
+        
+        # Fix the indexing issue by properly selecting users
+        selected_users = users_rated_i[a]
+        r = self.Ybar[i, selected_users].toarray().flatten()
+        
         if normalized:
             # cộng với 1e-8, để tránh chia cho 0
-            return (r * nearest_s)[0] / (np.abs(nearest_s).sum() + 1e-8)
+            return np.sum(r * nearest_s) / (np.abs(nearest_s).sum() + 1e-8)
 
-        return (r * nearest_s)[0] / (np.abs(nearest_s).sum() + 1e-8) + self.mu[u]
+        return np.sum(r * nearest_s) / (np.abs(nearest_s).sum() + 1e-8) + self.mu[u]
 
     def pred(self, u, i, normalized=1):
         """
